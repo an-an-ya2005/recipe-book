@@ -1,0 +1,13 @@
+.profile-page {
+    text-align: center;
+    padding: 50px;
+  }
+  
+  .profile-page button {
+    padding: 10px 20px;
+    background-color: #ff6f61;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
