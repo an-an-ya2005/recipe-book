@@ -25,22 +25,11 @@ function HomePage() {
       >
         <p
           onClick={() => navigate("/login")}
-          style={{ fontSize: "24px", color: "white", cursor: "pointer" }}
+          style={{ fontSize: "24px", color: "purple", cursor: "pointer" }}
         >
-          Breakfast
+          <button className="btn btn-primary">Login</button>
         </p>
-        <p
-          onClick={() => navigate("/login")}
-          style={{ fontSize: "24px", color: "white", cursor: "pointer" }}
-        >
-          Lunch
-        </p>
-        <p
-          onClick={() => navigate("/login")}
-          style={{ fontSize: "24px", color: "white", cursor: "pointer" }}
-        >
-          Dinner
-        </p>
+        
       </div>
     </div>
   );

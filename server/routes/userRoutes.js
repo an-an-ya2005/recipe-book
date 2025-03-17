@@ -4,22 +4,19 @@ const {
   registerController,
   authController,
   getProfilecontroller,
-  // updateProfilecontroller,
 } = require("../controller/userCtrl");
-const authMiddleware = require("../middlewares/auth");
+const Authenticate = require("../middlewares/auth"); // Ensure correct import
 
 // Router object
 const router = express.Router();
 
-// Routes
-//  LOGIN || POST
+// LOGIN || POST
 router.post("/login", loginController);
-
 // REGISTER || POST
 router.post("/register", registerController);
-router.post("/getUserData", authMiddleware, authController);
+router.post("/getUserData", Authenticate, authController);
 
-router.get("/profile", authMiddleware, getProfilecontroller);
-// router.get("/upprofile",authMiddleware,updateProfilecontroller);
+// Profile || GET
+router.get("/profile", Authenticate, getProfilecontroller);
 
 module.exports = router;

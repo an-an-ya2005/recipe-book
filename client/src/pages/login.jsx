@@ -1,28 +1,30 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Form, Input } from "antd";
+import { useDispatch } from "react-redux";
+import { showLoading, hideLoading } from "../redux/features/alertSlice";
+import Homepage from "./Homepage"; // Import Homepage if it's a valid component
 
 function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handleLogin = async (values) => {
+    dispatch(showLoading());
 
     try {
       const response = await axios.post("http://localhost:7000/api/v1/user/login", {
-        email,
-        password,
+        email: values.email,
+        password: values.password,
       });
 
+      console.log(response);
+
       if (response.data.success) {
-        alert("Logged in successfully!");
-        // Example: Save token to localStorage and navigate to dashboard
         localStorage.setItem("token", response.data.token);
-        navigate("/"); // Change this route as per your app
+        alert("Logged in successfully!");
+        navigate("/");
       } else {
         alert(response.data.message || "Login failed");
       }
@@ -30,62 +32,31 @@ function Login() {
       console.error("Login Error:", error);
       alert("Something went wrong. Please try again.");
     } finally {
-      setLoading(false);
+      dispatch(hideLoading());
     }
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100vh",
-      }}
-    >
-      <form
-        style={{
-          width: "300px",
-          padding: "20px",
-          border: "1px solid #ccc",
-          borderRadius: "10px",
-          backgroundColor: "#f9f9f9",
-        }}
-        onSubmit={handleLogin}
-      >
-        <h3>Login</h3>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Email</label>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
-        <div style={{ marginBottom: "15px" }}>
-          <label>Password</label>
-          <input
-            type="password"
-            required
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
-          />
-        </div>
-        <button
-          type="submit"
-          style={{ width: "100%", padding: "10px" }}
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-        <p style={{ marginTop: "10px" }}>
-          Not a user? <Link to="/register">Register here</Link>
-        </p>
-      </form>
-    </div>
+    <>
+      <Homepage/> {/* Ensure that Homepage is correctly imported */}
+      <div className="form-container">
+        <Form layout="vertical" onFinish={handleLogin} className="login-form">
+          <h3 className="text-center">Login</h3>
+          <Form.Item label="Email" name="email" rules={[{ required: true, message: "Please enter your email!" }]}>
+            <Input type="email" />
+          </Form.Item>
+          <Form.Item label="Password" name="password" rules={[{ required: true, message: "Please enter your password!" }]}>
+            <Input type="password" />
+          </Form.Item>
+          <button className="btn btn-primary" type="submit">
+            Login
+          </button>
+          <p className="text-center">
+            Not a user? <Link to="/register">Register here</Link>
+          </p>
+        </Form>
+      </div>
+    </>
   );
 }
 

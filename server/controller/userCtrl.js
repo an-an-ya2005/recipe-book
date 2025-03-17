@@ -1,6 +1,7 @@
 const userModel = require("../models/userModels");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
 
 // Register Controller
 const registerController = async (req, res) => {
@@ -25,8 +26,9 @@ const registerController = async (req, res) => {
   }
 };
 
-//login controller
 
+
+// Login Controller
 
 
 const loginController = async (req, res) => {
@@ -41,8 +43,6 @@ const loginController = async (req, res) => {
         message: "User not found",
       });
     }
-
-
     // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
@@ -72,18 +72,18 @@ const loginController = async (req, res) => {
 };
 
 
-
- const authController = async (req, res) => {
+// Auth Controller
+const authController = async (req, res) => {
   try {
     const user = await userModel.findById(req.body.userId);
     // console.log(user)
-     if (!user) {
-     return res.status(200).send({ message: "User Not Found", success: false });
+    if (!user) {
+      return res.status(200).send({ message: "User Not Found", success: false });
     }
-     user.password = undefined;
+    user.password = undefined;
     res.status(200).send({ success: true, data: user });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res.status(500).send({
       message: "Authentication Error",
       success: false,
@@ -91,6 +91,8 @@ const loginController = async (req, res) => {
     });
   }
 };
+
+
 
 //profile
 // Import the User model
@@ -150,9 +152,9 @@ const getProfilecontroller = async (req, res) => {
 
 
 module.exports = {
-    loginController,
-    registerController,
-     authController,
-     getProfilecontroller,
-    //  updateProfilecontroller
-    };
+  loginController,
+  registerController,
+  authController,
+  getProfilecontroller,
+  //  updateProfilecontroller
+};

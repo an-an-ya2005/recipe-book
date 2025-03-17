@@ -4,8 +4,8 @@ const morgan = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-const user =require("./routes/userRoutes")
-const recipe =require("./routes/recipeRoutes")
+const userRoutes =require("./routes/userRoutes")
+const recipeRoutes =require("./routes/recipeRoutes")
 //dotenv config
 dotenv.config();
 require('dotenv').config();
@@ -19,8 +19,7 @@ connectDB();
 
 
 //rest object
-const app = express();
-
+const app=express()
 //middlewares
 app.use(express.json());
 app.use(morgan("dev"));
@@ -29,10 +28,10 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allow DELETE
   credentials: true
 }));
-
 //routes
-app.use("/api/v1/user", require("./routes/userRoutes"));
-app.use("/api/v1/recipe", require("./routes/recipeRoutes"));
+app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/recipe", recipeRoutes);
+console.log("User routes registered at /api/v1/user");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:5173"); // Allow your frontend origin
