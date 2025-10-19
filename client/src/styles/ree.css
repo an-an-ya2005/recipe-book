@@ -50,22 +50,56 @@ nav a {
 }
 
 /* Recipe Cards */
+/* Recipe container grid */
+.recipe-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+  justify-content: center;
+  align-items: start;
+  padding: 0 20px;
+}
+
+/* Recipe card styling */
 .recipe-card {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    max-width: 500px;
-    text-align: left;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+
+/* Buttons inside recipe card */
+.recipe-card button {
+  background-color: #ff4081;
+  border: none;
+  padding: 8px 12px;
+  margin-right: 10px;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.recipe-card button:hover {
+  background-color: #d81b60;
 }
 
 .recipe-card img {
-    width: 100%;
-    border-radius: 8px;
-    max-height: 200px;
-    object-fit: cover;
+  width: 100%;
+  border-radius: 8px;
+  max-height: 180px;
+  object-fit: cover;
+  margin-bottom: 10px;
 }
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -82,4 +116,23 @@ nav a {
     .recipe-card {
         max-width: 90%;
     }
+}
+.suggestions-list {
+  list-style: none;
+  padding: 0;
+  margin: 5px 0;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 5px;
+}
+
+.suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.suggestion-item:hover {
+  background-color: #f0f0f0;
 }

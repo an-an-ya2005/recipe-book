@@ -1,67 +1,147 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import "../styles/ree.css";
 
 const AddRecipe = () => {
-  const [recipe, setRecipe] = useState({
-    title: "",
-    instr: "",
-    imgurl: "",
-    category: "",
-    ingredients: [{ name: "", qty: "" }],
-  });
+  const [title, setTitle] = useState("");
+  const [instr, setInstr] = useState("");
+  const [imgurl, setImgurl] = useState("");
+  const [category, setCategory] = useState("");
+  const [ingredients, setIngredients] = useState([{ name: "", qty: "" }]);
 
-  const navigate = useNavigate(); // ✅ Use for redirection
-
-  const handleChange = (e) => {
-    setRecipe({ ...recipe, [e.target.name]: e.target.value });
+  // Ingredients handlers
+  const handleIngredientChange = (index, field, value) => {
+    const newIngredients = [...ingredients];
+    newIngredients[index][field] = value;
+    setIngredients(newIngredients);
   };
 
-  const handleIngredientChange = (index, e) => {
-    const newIngredients = [...recipe.ingredients];
-    newIngredients[index][e.target.name] = e.target.value;
-    setRecipe({ ...recipe, ingredients: newIngredients });
-  };
+  const addIngredient = () => setIngredients([...ingredients, { name: "", qty: "" }]);
+  const removeIngredient = (index) =>
+    setIngredients(ingredients.filter((_, i) => i !== index));
 
-  const addIngredient = () => {
-    setRecipe({
-      ...recipe,
-      ingredients: [...recipe.ingredients, { name: "", qty: "" }],
-    });
-  };
-
+  // Submit recipe to backend
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:7000/api/v1/recipe/recipes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(recipe),
-    });
-    const data = await response.json();
-    console.log(data);
-    alert("Recipe added successfully!");
+    const recipeData = { title, instr, imgurl, category, ingredients };
 
-    // ✅ Redirect to Recipes page with category filter
-    navigate(`/recipes?category=${recipe.category}`);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:7000/api/v1/recipe/recipes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(recipeData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert("Recipe added successfully!");
+        setTitle("");
+        setInstr("");
+        setImgurl("");
+        setCategory("");
+        setIngredients([{ name: "", qty: "" }]);
+      } else {
+        alert(data.message || "Failed to add recipe.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to add recipe.");
+    }
   };
 
   return (
-    <div>
-      <h2>Add a Recipe</h2>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="title" placeholder="Recipe Title" value={recipe.title} onChange={handleChange} required />
-        <textarea name="instr" placeholder="Instructions" value={recipe.instr} onChange={handleChange} required />
-        <input type="text" name="imgurl" placeholder="Image URL" value={recipe.imgurl} onChange={handleChange} required />
-        <input type="text" name="category" placeholder="Category (e.g., Breakfast, Lunch)" value={recipe.category} onChange={handleChange} required />
+    <div className="form-container">
+      <h2 className="form-title">Add / Update Recipe</h2>
+      <form onSubmit={handleSubmit} className="recipe-form">
+        {/* Title */}
+        <label className="form-label">Title</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter recipe title"
+          className="form-input"
+          required
+        />
 
-        <h3>Ingredients</h3>
-        {recipe.ingredients.map((ingredient, index) => (
-          <div key={index}>
-            <input type="text" name="name" placeholder="Ingredient Name" value={ingredient.name} onChange={(e) => handleIngredientChange(index, e)} required />
-            <input type="text" name="qty" placeholder="Quantity" value={ingredient.qty} onChange={(e) => handleIngredientChange(index, e)} required />
+        {/* Category */}
+        <label className="form-label">Category</label>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="form-input"
+          required
+        >
+          <option value="">Select Category</option>
+          <option value="Breakfast">Breakfast</option>
+          <option value="Lunch">Lunch</option>
+          <option value="Dinner">Dinner</option>
+        </select>
+
+        {/* Image URL */}
+        <label className="form-label">Image URL</label>
+        <input
+          type="text"
+          placeholder="Image URL"
+          value={imgurl}
+          onChange={(e) => setImgurl(e.target.value)}
+          className="form-input"
+          required
+        />
+
+        {/* Instructions */}
+        <label className="form-label">Instructions</label>
+        <textarea
+          placeholder="Instructions"
+          value={instr}
+          onChange={(e) => setInstr(e.target.value)}
+          className="form-textarea"
+          required
+        />
+
+        {/* Ingredients */}
+        <label className="form-label">Ingredients</label>
+        {ingredients.map((ing, idx) => (
+          <div key={idx} className="ingredient-row">
+            <input
+              type="text"
+              placeholder="Ingredient name"
+              value={ing.name}
+              onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
+              className="form-input ingredient-input"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Quantity"
+              value={ing.qty}
+              onChange={(e) => handleIngredientChange(idx, "qty", e.target.value)}
+              className="form-input ingredient-input"
+              required
+            />
+            {ingredients.length > 1 && (
+              <button
+                type="button"
+                className="remove-btn"
+                onClick={() => removeIngredient(idx)}
+              >
+                Remove
+              </button>
+            )}
           </div>
         ))}
-        <button type="button" onClick={addIngredient}>Add Ingredient</button>
-        <button type="submit">Submit Recipe</button>
+        <button type="button" className="add-btn" onClick={addIngredient}>
+          + Add Ingredient
+        </button>
+
+        {/* Submit */}
+        <button type="submit" className="submit-btn">
+          Save Recipe
+        </button>
       </form>
     </div>
   );

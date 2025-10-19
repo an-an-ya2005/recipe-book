@@ -1,21 +1,71 @@
 const recipeModel = require("../models/recipeModel");
 
-// Create a new recipe
+// server/testNutrition.js
+// const dotenv = require("dotenv");
+// dotenv.config(); // Load .env variables
+// const { fetchNutrition } = require("../services/nutrition");
+
+// const testNutrition = async () => {
+//   const ingredients = [
+//     { name: "tomato", qty: "2" },
+//     { name: "onion", qty: "1" },
+//     { name: "olive oil", qty: "1 tbsp" }
+//   ];
+
+//   const nutritionData = await fetchNutrition(ingredients);
+
+//   console.log("Nutrition data fetched successfully:");
+//   console.log(JSON.stringify(nutritionData, null, 2));
+// };
+
+// testNutrition();
+
+// const { fetchNutrition } = require("../services/nutrition"); // Path relative to this file
+
+// const testNutrition = async () => {
+//   const ingredients = [
+//     { name: "tomato", qty: "2" },
+//     { name: "onion", qty: "1" },
+//     { name: "olive oil", qty: "1 tbsp" }
+//   ];
+
+//   try {
+//     const nutritionData = await fetchNutrition(ingredients);
+
+//     console.log("Nutrition data fetched successfully:");
+//     console.log(JSON.stringify(nutritionData, null, 2));
+//   } catch (error) {
+//     console.error("Error fetching nutrition:", error.message);
+//   }
+// };
+
+// // Run the test directly
+// testNutrition();
+
+// Create a new recipe with nutrition info
+// const recipeModel = require("../models/recipeModel");
+
+// Create a new recipe without nutrition info
 const createRecipe = async (req, res) => {
-    try {
-      const newRecipe = new recipeModel(req.body);
-      await newRecipe.save();
-      res.status(201).json({
-        success: true,
-        message: "Recipe created successfully",
-        recipe: newRecipe,
-      });
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: `Error creating recipe: ${error.message}`,
-      });
-    }
+  try {
+    const newRecipe = new recipeModel({
+      ...req.body,
+      // no nutrition field here
+    });
+
+    await newRecipe.save();
+
+    res.status(201).json({
+      success: true,
+      message: "Recipe created successfully",
+      recipe: newRecipe,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error creating recipe: ${error.message}`,
+    });
+  }
 };
 
 // Get all recipes (Supports category filtering)
@@ -88,3 +138,4 @@ module.exports = {
   updateRecipe,
   deleteRecipe,
 };
+

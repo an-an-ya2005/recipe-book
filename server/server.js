@@ -4,11 +4,13 @@ const morgan = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-const userRoutes =require("./routes/userRoutes")
-const recipeRoutes =require("./routes/recipeRoutes")
+const userRoutes =require("./routes/userRoutes");
+const recipeRoutes =require("./routes/recipeRoutes");
+const { fetchNutrition } = require('./services/nutrition');
+// const mealPlan =require("./routes/mealPlan")
 //dotenv config
 dotenv.config();
-require('dotenv').config();
+// require('dotenv').config();
 
 
 //mongodb connection
@@ -31,7 +33,8 @@ app.use(cors({
 //routes
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/recipe", recipeRoutes);
-console.log("User routes registered at /api/v1/user");
+// app.use("/api/v1/mealPlan", mealPlan);
+
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:5173"); // Allow your frontend origin

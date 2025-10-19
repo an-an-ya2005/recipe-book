@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../styles/header.css'; // Make sure the path is correct
+import '../styles/header.css';
 
 function Header({ setShowLogin }) {
   return (
@@ -11,15 +11,29 @@ function Header({ setShowLogin }) {
             <li><Link to="/">Home</Link></li>
             <li><Link to="/recipes">Recipes</Link></li>
             <li><Link to="/profile/1">Profile</Link></li>
-            <Link to="/addrecipe">
-        <button style={{ marginLeft: "10px", padding: "5px 10px", background: "pink", border: "none", cursor: "pointer", borderRadius: "5px" }}>
-          Share Your Recipe
-        </button>
-      </Link>
+            <li>
+              <Link to="/addrecipe">
+                <button
+                  style={{
+                    marginLeft: "10px",
+                    padding: "5px 10px",
+                    background: "pink",
+                    border: "none",
+                    cursor: "pointer",
+                    borderRadius: "5px"
+                  }}
+                >
+                  Share Your Recipe
+                </button>
+              </Link>
+            </li>
+            <li>
+              <Link to="/findrecipes">
+                <button className="submit-btn">Find Recipes Online</button>
+              </Link>
+            </li>
           </ul>
         </div>
-
-        
       </nav>
     </header>
   );

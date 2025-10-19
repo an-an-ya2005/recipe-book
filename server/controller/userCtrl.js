@@ -29,7 +29,7 @@ const registerController = async (req, res) => {
 
 
 // Login Controller
-
+// make sure the model is imported
 
 const loginController = async (req, res) => {
   try {
@@ -38,15 +38,16 @@ const loginController = async (req, res) => {
     // Check if the user exists
     const user = await userModel.findOne({ email });
     if (!user) {
-      return res.status(404).send({
+      return res.status(404).json({
         success: false,
         message: "User not found",
       });
     }
+
     // Compare passwords
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).send({
+      return res.status(400).json({
         success: false,
         message: "Invalid credentials",
       });
@@ -57,19 +58,21 @@ const loginController = async (req, res) => {
       expiresIn: "1d",
     });
 
-    res.status(200).send({
+    // Send success response
+    res.status(200).json({
       success: true,
       message: "Login successful",
       token,
     });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).send({
+    res.status(500).json({
       success: false,
       message: "Internal Server Error",
     });
   }
 };
+
 
 
 // Auth Controller
