@@ -1,34 +1,47 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Header from "./components/header";
+import Footer from "./components/footer";
 import HomePage from "./pages/Homepage";
 import Login from "./pages/login";
 import Register from "./pages/register";
-import Header from "./components/header";
-import Footer from "./components/footer";
 import Recipes from "./pages/recipes";
 import AddRecipe from "./pages/addrecipe";
 import RecipeFinder from "./pages/RecipeFinder";
+import Profile from "./pages/profile";
+import ProtectedRoute from "./components/protectedroute";
 
 function App() {
   return (
     <Router>
-      <div>
-        <Header />
+      <Header />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/recipes" element={<Recipes />} />
+        <Route path="/recipes/:category" element={<Recipes />} />
 
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/recipes" element={<Recipes />} />
-          <Route path="/recipes/:category" element={<Recipes />} />
-          <Route path="/addrecipe" element={<AddRecipe />} />
-          <Route path="/updaterecipe/:id" element={<AddRecipe />} />
-          <Route path="/findrecipes" element={<RecipeFinder />} /> {/* Fixed path */}
-        </Routes>
+        {/* Profile routes */}
+        <Route path="/profile" element={<Navigate to="/profile/me" replace />} />
+        <Route path="/profile/me" element={
+          <ProtectedRoute><Profile /></ProtectedRoute>
+        } />
+        <Route path="/profile/:userId" element={
+          <ProtectedRoute><Profile /></ProtectedRoute>
+        } />
 
-        <Footer />
-      </div>
+        {/* Other protected pages */}
+        <Route path="/addrecipe" element={
+          <ProtectedRoute><AddRecipe /></ProtectedRoute>
+        } />
+        <Route path="/updaterecipe/:id" element={
+          <ProtectedRoute><AddRecipe /></ProtectedRoute>
+        } />
+        <Route path="/findrecipes" element={
+          <ProtectedRoute><RecipeFinder /></ProtectedRoute>
+        } />
+      </Routes>
+      <Footer />
     </Router>
   );
 }

@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const userRoutes =require("./routes/userRoutes");
 const recipeRoutes =require("./routes/recipeRoutes");
-const { fetchNutrition } = require('./services/nutrition');
+// const { fetchNutrition } = require('./services/nutrition');
 // const mealPlan =require("./routes/mealPlan")
 //dotenv config
 dotenv.config();

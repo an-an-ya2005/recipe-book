@@ -1,41 +1,45 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '../redux/features/userSlice.js';
 import '../styles/header.css';
 
-function Header({ setShowLogin }) {
+function Header() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user, isAuthenticated } = useSelector((state) => state.user);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // clear user session
-    alert("Logged out successfully!");
-    navigate("/login"); // redirect to login page
+    if (window.confirm('Are you sure you want to log out?')) {
+      localStorage.removeItem("token");
+      dispatch(logout());
+      navigate("/login");
+    }
   };
 
   return (
     <header>
       <nav className="navbar">
-        <div className="nav-links">
-          <ul>
-            <li><Link to="/">Home</Link></li>
-            <li><Link to="/recipes">Recipes</Link></li>
-            <li><Link to="/profile/1">Profile</Link></li>
+        <ul className="nav-links">
+          <li><Link to="/">Home</Link></li>
+          <li><Link to="/recipes">Recipes</Link></li>
+          <li><Link to="/profile">Profile</Link></li>
+          <li>
+            <Link to="/addrecipe">
+              <button className="pink-btn">Share Your Recipe</button>
+            </Link>
+          </li>
+          <li>
+            <Link to="/findrecipes">
+              <button className="submit-btn">Find Recipes Online</button>
+            </Link>
+          </li>
+          {isAuthenticated && (
             <li>
-              <Link to="/addrecipe">
-                <button className="pink-btn">Share Your Recipe</button>
-              </Link>
+              <button className="logout-btn" onClick={handleLogout}>Logout</button>
             </li>
-            <li>
-              <Link to="/findrecipes">
-                <button className="submit-btn">Find Recipes Online</button>
-              </Link>
-            </li>
-            {localStorage.getItem("token") && (
-              <li>
-                <button className="logout-btn" onClick={handleLogout}>Logout</button>
-              </li>
-            )}
-          </ul>
-        </div>
+          )}
+        </ul>
       </nav>
     </header>
   );

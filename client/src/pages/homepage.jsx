@@ -12,6 +12,7 @@ function HomePage() {
         textAlign: "center",
         height: "100vh",
         overflow: "hidden",
+        backgroundColor: "#ff6699", // Fallback background color
       }}
     >
       <img
@@ -22,6 +23,10 @@ function HomePage() {
           height: "100%",
           objectFit: "cover",
           filter: "brightness(70%)",
+        }}
+        onError={(e) => {
+          console.log("Image failed to load:", e.target.src);
+          e.target.style.display = "none";
         }}
       />
 

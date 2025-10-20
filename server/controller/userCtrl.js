@@ -1,163 +1,131 @@
 const userModel = require("../models/userModels");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-
-
-// Register Controller
+const multer = require("multer");
+const path = require("path");
+// REGISTER USER
 const registerController = async (req, res) => {
   try {
     const existingUser = await userModel.findOne({ email: req.body.email });
     if (existingUser) {
-      return res.status(200).send({ message: "User Already Exists", success: false });
+      return res
+        .status(200)
+        .send({ message: "User Already Exists", success: false });
     }
     const password = req.body.password;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     req.body.password = hashedPassword;
+
     const newUser = new userModel(req.body);
     await newUser.save();
-    res.status(201).send({ message: "Registered Successfully", success: true });
+    res
+      .status(201)
+      .send({ message: "User Registered Successfully", success: true });
   } catch (error) {
     console.log(error);
-    res.status(500).send({
-      success: false,
-      message: `Register Controller Error: ${error.message}`,
-    });
+    res.status(500).send({ success: false, message: `Register Controller ${error.message}` });
   }
 };
 
-
-
-// Login Controller
-// make sure the model is imported
-
+// LOGIN USER
 const loginController = async (req, res) => {
   try {
-    const { email, password } = req.body;
-
-    // Check if the user exists
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({ email: req.body.email });
     if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+      return res.status(200).send({ message: "User not found", success: false });
     }
 
-    // Compare passwords
-    const isMatch = await bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid credentials",
-      });
+      return res.status(200).send({ message: "Invalid Email or Password", success: false });
     }
 
-    // Generate a JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
 
-    // Send success response
-    res.status(200).json({
+    res.status(200).send({
+      message: "Login Success",
       success: true,
-      message: "Login successful",
       token,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar || "",
+        bio: user.bio || "",
+      },
     });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-    });
+    console.log(error);
+    res.status(500).send({ success: false, message: `Login Controller ${error.message}` });
   }
 };
 
-
-
-// Auth Controller
-const authController = async (req, res) => {
+// GET USER DATA (used in Profile)
+const getUserDataController = async (req, res) => {
   try {
-    const user = await userModel.findById(req.body.userId);
-    // console.log(user)
-    if (!user) {
-      return res.status(200).send({ message: "User Not Found", success: false });
-    }
-    user.password = undefined;
+    const user = await userModel.findById(req.body.userId).select("-password");
+    if (!user) return res.status(404).send({ success: false, message: "User not found" });
     res.status(200).send({ success: true, data: user });
   } catch (error) {
-    // console.log(error);
-    res.status(500).send({
-      message: "Authentication Error",
-      success: false,
-      error,
-    });
+    console.log(error);
+    res.status(500).send({ success: false, message: "Auth Error", error });
   }
 };
-
-
-
-//profile
-// Import the User model
-
-// Get User Profile
 const getProfilecontroller = async (req, res) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({ message: "Unauthorized", success: false });
-    }
-    res.status(200).json({ success: true, data: req.user });
+    const userId = req.user._id;
+    const user = await userModel.findById(userId).select("-password");
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+    res.json({ success: true, data: user });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-      error: error.message,
-    });
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/avatars"); // folder to store avatars
+  },
+  filename: function (req, file, cb) {
+    const ext = path.extname(file.originalname);
+    cb(null, req.user._id + ext); // userId.jpg/png
+  },
+});
 
-// // Update User Profile
-// const updateProfilecontroller = async (req, res) => {
-//     try {
-//         const userId = req.user.id; // Assuming `req.user` is set by the authentication middleware
-//         const { name, email, phone } = req.body; // Accept data to update
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
+  fileFilter: function (req, file, cb) {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Only image files are allowed!"));
+    }
+    cb(null, true);
+  },
+}).single("avatar");
 
-//         const user = await userModel.findById(userId);
+// Update Avatar Controller
+const updateAvatarController = async (req, res) => {
+  upload(req, res, async function (err) {
+    if (err) {
+      return res.status(400).json({ success: false, message: err.message });
+    }
 
-//         if (!user) {
-//             return res.status(404).json({
-//                 success: false,
-//                 message: 'User not found',
-//             });
-//         }
+    try {
+      const user = await userModel.findById(req.user._id);
+      if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-//         // Update user details
-//         user.name = name || user.name;
-//         user.email = email || user.email;
-//         user.phone = phone || user.phone;
+      // Save avatar path in DB
+      user.avatar = req.file ? `/uploads/avatars/${req.file.filename}` : user.avatar;
+      await user.save();
 
-//         await user.save(); // Save updated user
-
-//         res.status(200).json({
-//             success: true,
-//             message: 'Profile updated successfully',
-//             data: user,
-//         });
-//     } catch (error) {
-//         res.status(500).json({
-//             success: false,
-//             message: 'Server error',
-//             error: error.message,
-//         });
-//     }
-// };
-
-
-
-module.exports = {
-  loginController,
-  registerController,
-  authController,
-  getProfilecontroller,
-  //  updateProfilecontroller
+      res.status(200).json({ success: true, data: user, message: "Avatar updated successfully!" });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ success: false, message: "Server Error" });
+    }
+  });
 };
+
+module.exports = { registerController, loginController, getUserDataController, getProfilecontroller, updateAvatarController };
