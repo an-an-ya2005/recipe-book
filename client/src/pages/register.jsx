@@ -1,11 +1,11 @@
 import React from "react";
-// import "../styles/RegiserStyles.css";
 import { Form, Input, message } from "antd";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { showLoading, hideLoading } from "../redux/features/alertSlice";
 import HomePage from "./Homepage";
+
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,25 +30,57 @@ const Register = () => {
 
   return (
     <>
-    <HomePage/>
-    <div className="form-container">
-      <Form layout="vertical" onFinish={onFinishHandler} className="register-form">
-        <h3 className="text-center">Register</h3>
-        <Form.Item label="Name" name="name">
-          <Input type="text" required />
-        </Form.Item>
-        <Form.Item label="Email" name="email">
-          <Input type="email" required />
-        </Form.Item>
-        <Form.Item label="Password" name="password">
-          <Input type="password" required />
-        </Form.Item>
-        <p className="text-center">
-          Already a user? <Link to="/login">Login here</Link>
-        </p>
-        <button className="btn btn-primary" type="submit">Register</button>
-      </Form>
-    </div>
+      <HomePage />
+      <div
+        className="form-container"
+        style={{
+          background: "rgba(255, 255, 255, 0.95)",
+          borderRadius: "20px",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
+          width: "380px",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          padding: "30px",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ color: "#ff6699", marginBottom: "20px" }}>Register</h2>
+        <Form layout="vertical" onFinish={onFinishHandler} className="register-form">
+          <Form.Item label="Name" name="name" rules={[{ required: true }]}>
+            <Input placeholder="Enter your name" style={{ borderRadius: "10px" }} />
+          </Form.Item>
+          <Form.Item label="Email" name="email" rules={[{ required: true }]}>
+            <Input placeholder="Enter your email" style={{ borderRadius: "10px" }} />
+          </Form.Item>
+          <Form.Item label="Password" name="password" rules={[{ required: true }]}>
+            <Input.Password placeholder="Enter your password" style={{ borderRadius: "10px" }} />
+          </Form.Item>
+          <button
+            className="btn btn-primary"
+            type="submit"
+            style={{
+              backgroundColor: "#ff6699",
+              color: "white",
+              border: "none",
+              borderRadius: "20px",
+              padding: "10px 25px",
+              fontSize: "16px",
+              cursor: "pointer",
+              transition: "0.3s",
+            }}
+          >
+            Register
+          </button>
+          <p style={{ marginTop: "15px" }}>
+            Already a user?{" "}
+            <Link to="/login" style={{ color: "#ff3385" }}>
+              Login here
+            </Link>
+          </p>
+        </Form>
+      </div>
     </>
   );
 };

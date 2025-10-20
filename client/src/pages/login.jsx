@@ -4,7 +4,7 @@ import axios from "axios";
 import { Form, Input } from "antd";
 import { useDispatch } from "react-redux";
 import { showLoading, hideLoading } from "../redux/features/alertSlice";
-import Homepage from "./Homepage"; // Import Homepage if it's a valid component
+import HomePage from "./Homepage";
 
 function Login() {
   const navigate = useNavigate();
@@ -12,18 +12,14 @@ function Login() {
 
   const handleLogin = async (values) => {
     dispatch(showLoading());
-
     try {
       const response = await axios.post("http://localhost:7000/api/v1/user/login", {
         email: values.email,
         password: values.password,
       });
-
-      console.log(response);
-
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
-        alert("Logged in successfully!");
+        alert("Welcome back!");
         navigate("/");
       } else {
         alert(response.data.message || "Login failed");
@@ -38,21 +34,58 @@ function Login() {
 
   return (
     <>
-      <Homepage/> {/* Ensure that Homepage is correctly imported */}
-      <div className="form-container">
+      <HomePage />
+      <div
+        className="form-container"
+        style={{
+          background: "rgba(255, 255, 255, 0.95)",
+          borderRadius: "20px",
+          boxShadow: "0 6px 20px rgba(0,0,0,0.2)",
+          width: "350px",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          padding: "30px",
+          textAlign: "center",
+        }}
+      >
+        <h2 style={{ color: "#ff6699", marginBottom: "20px" }}>Login</h2>
         <Form layout="vertical" onFinish={handleLogin} className="login-form">
-          <h3 className="text-center">Login</h3>
-          <Form.Item label="Email" name="email" rules={[{ required: true, message: "Please enter your email!" }]}>
-            <Input type="email" />
+          <Form.Item label="Email" name="email" rules={[{ required: true }]}>
+            <Input
+              placeholder="Enter your email"
+              style={{ borderRadius: "10px", padding: "10px" }}
+            />
           </Form.Item>
-          <Form.Item label="Password" name="password" rules={[{ required: true, message: "Please enter your password!" }]}>
-            <Input type="password" />
+          <Form.Item label="Password" name="password" rules={[{ required: true }]}>
+            <Input.Password
+              placeholder="Enter your password"
+              style={{ borderRadius: "10px", padding: "10px" }}
+            />
           </Form.Item>
-          <button className="btn btn-primary" type="submit">
+          <button
+            className="btn btn-primary"
+            type="submit"
+            style={{
+              backgroundColor: "#ff6699",
+              color: "white",
+              border: "none",
+              borderRadius: "20px",
+              padding: "10px 25px",
+              fontSize: "16px",
+              marginTop: "10px",
+              cursor: "pointer",
+              transition: "0.3s",
+            }}
+          >
             Login
           </button>
-          <p className="text-center">
-            Not a user? <Link to="/register">Register here</Link>
+          <p style={{ marginTop: "15px" }}>
+            Not a user?{" "}
+            <Link to="/register" style={{ color: "#ff3385" }}>
+              Register here
+            </Link>
           </p>
         </Form>
       </div>

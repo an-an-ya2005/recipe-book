@@ -1,8 +1,16 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/header.css';
 
 function Header({ setShowLogin }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // clear user session
+    alert("Logged out successfully!");
+    navigate("/login"); // redirect to login page
+  };
+
   return (
     <header>
       <nav className="navbar">
@@ -13,18 +21,7 @@ function Header({ setShowLogin }) {
             <li><Link to="/profile/1">Profile</Link></li>
             <li>
               <Link to="/addrecipe">
-                <button
-                  style={{
-                    marginLeft: "10px",
-                    padding: "5px 10px",
-                    background: "pink",
-                    border: "none",
-                    cursor: "pointer",
-                    borderRadius: "5px"
-                  }}
-                >
-                  Share Your Recipe
-                </button>
+                <button className="pink-btn">Share Your Recipe</button>
               </Link>
             </li>
             <li>
@@ -32,6 +29,11 @@ function Header({ setShowLogin }) {
                 <button className="submit-btn">Find Recipes Online</button>
               </Link>
             </li>
+            {localStorage.getItem("token") && (
+              <li>
+                <button className="logout-btn" onClick={handleLogout}>Logout</button>
+              </li>
+            )}
           </ul>
         </div>
       </nav>

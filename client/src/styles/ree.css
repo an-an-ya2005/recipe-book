@@ -136,3 +136,129 @@ nav a {
 .suggestion-item:hover {
   background-color: #f0f0f0;
 }
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #ffe6e6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Heading */
+.head {
+  text-align: center;
+  margin-top: 30px;
+  color: #ff6600;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* Search bar section */
+.searchBar {
+  display: flex;
+  justify-content: center;
+  margin: 20px auto;
+  gap: 10px;
+}
+
+.searchBar input {
+  padding: 10px 15px;
+  width: 250px;
+  border-radius: 25px;
+  border: 1px solid #ff6600;
+  outline: none;
+  font-size: 16px;
+}
+
+.searchBar button {
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.searchBar button:hover {
+  background-color: #ff8533;
+}
+
+/* Message text */
+.msg {
+  text-align: center;
+  color: #999;
+  margin-top: 10px;
+  font-size: 18px;
+}
+
+/* Cards container */
+.meals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+  margin: 30px;
+}
+
+/* Individual meal card */
+.mealImg {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  text-align: center;
+  padding: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mealImg:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mealImg img {
+  width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+/* Recipe name text */
+.mealImg p {
+  margin: 5px 0;
+  font-size: 16px;
+  color: #333;
+}
+
+/* Button for View Recipe */
+.mealImg button {
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.mealImg button:hover {
+  background-color: #ff8533;
+}
+
+/* Expanded recipe info */
+.mealImg div {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .meals {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mealImg {
+    width: 80%;
+  }
+}
