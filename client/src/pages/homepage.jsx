@@ -1,70 +1,79 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Image from "../assets/myy.jpg";
+import { motion } from "framer-motion";
+import LocalHero from "../assets/myy.jpg";
+import "../styles/home.css";
 
 function HomePage() {
   const navigate = useNavigate();
 
   return (
-    <div
-      style={{
-        position: "relative",
-        textAlign: "center",
-        height: "100vh",
-        overflow: "hidden",
-        backgroundColor: "#ff6699", // Fallback background color
-      }}
-    >
-      <img
-        src={Image}
-        alt="Background"
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          filter: "brightness(70%)",
-        }}
-        onError={(e) => {
-          console.log("Image failed to load:", e.target.src);
-          e.target.style.display = "none";
-        }}
-      />
+    <div className="home-container">
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="hero-content">
+          <motion.div 
+            className="hero-text"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <span className="hero-subtitle">The Art of Cooking</span>
+            <h1 className="hero-title">
+              Taste the <br/>
+              <span>Extraordinary.</span>
+            </h1>
+            <p className="hero-description">
+              Discover recipes that inspire. From quick weeknight dinners to gourmet masterpieces, elevate your kitchen game today.
+            </p>
+            
+            <div className="hero-buttons">
+              <button 
+                onClick={() => navigate("/recipes")}
+                className="btn btn-primary"
+              >
+                Start Cooking
+              </button>
+              <button 
+                onClick={() => navigate("/register")}
+                className="btn btn-secondary"
+              >
+                Join Community
+              </button>
+            </div>
+          </motion.div>
 
-      <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          color: "white",
-          textShadow: "2px 2px 10px rgba(0,0,0,0.5)",
-        }}
-      >
-        <h1 style={{ fontSize: "48px", fontWeight: "bold", marginBottom: "10px" }}>
-          Welcome to <span style={{ color: "#ff99cc" }}>Food World</span>
-        </h1>
-        <p style={{ fontSize: "20px", marginBottom: "30px" }}>
-      Discover, cook, and enjoy your favorite recipes 🍳
-        </p>
-        <button
-          onClick={() => navigate("/login")}
-          style={{
-            padding: "12px 30px",
-            border: "none",
-            borderRadius: "30px",
-            backgroundColor: "#ff6699",
-            color: "white",
-            fontSize: "18px",
-            cursor: "pointer",
-            boxShadow: "0px 4px 10px rgba(0,0,0,0.3)",
-            transition: "all 0.3s ease",
-          }}
-          onMouseOver={(e) => (e.target.style.backgroundColor = "#ff3385")}
-          onMouseOut={(e) => (e.target.style.backgroundColor = "#ff6699")}
-        >
-          Get Started
-        </button>
-      </div>
+          <motion.div 
+            className="hero-image-container"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <img src={LocalHero} alt="Delicious Food" className="hero-image" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="features-section">
+        <div className="features-grid">
+          <div className="feature-card">
+            <span className="feature-icon">🍳</span>
+            <h3 className="feature-title">Diverse Recipes</h3>
+            <p className="feature-text">Explore thousands of recipes from cuisines around the world.</p>
+          </div>
+          <div className="feature-card">
+            <span className="feature-icon">🥗</span>
+            <h3 className="feature-title">Healthy Options</h3>
+            <p className="feature-text">Find nutritious meals that fit your dietary needs and goals.</p>
+          </div>
+          <div className="feature-card">
+            <span className="feature-icon">👨‍🍳</span>
+            <h3 className="feature-title">Community</h3>
+            <p className="feature-text">Share your own creations and connect with fellow food lovers.</p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

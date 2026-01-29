@@ -5,10 +5,12 @@ import HomePage from "./pages/Homepage";
 import Login from "./pages/login";
 import Register from "./pages/register";
 import Recipes from "./pages/recipes";
+import RecipeDetails from "./pages/recipesdetails";
 import AddRecipe from "./pages/addrecipe";
 import RecipeFinder from "./pages/RecipeFinder";
 import Profile from "./pages/profile";
 import ProtectedRoute from "./components/protectedroute";
+import RecipeSuggestions from "./pages/RecipeSuggestions";
 
 function App() {
   return (
@@ -20,6 +22,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/recipes" element={<Recipes />} />
         <Route path="/recipes/:category" element={<Recipes />} />
+        <Route path="/recipe/:id" element={<RecipeDetails />} />
 
         {/* Profile routes */}
         <Route path="/profile" element={<Navigate to="/profile/me" replace />} />
@@ -39,6 +42,9 @@ function App() {
         } />
         <Route path="/findrecipes" element={
           <ProtectedRoute><RecipeFinder /></ProtectedRoute>
+        } />
+        <Route path="/suggestions" element={
+          <ProtectedRoute><RecipeSuggestions /></ProtectedRoute>
         } />
       </Routes>
       <Footer />

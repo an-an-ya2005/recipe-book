@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/ree.css";
+import "../styles/auth.css"; // Reusing auth styles for consistency
 
 const AddRecipe = () => {
   const [title, setTitle] = useState("");
@@ -26,7 +26,9 @@ const AddRecipe = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:7000/api/v1/recipe/recipes", {
+      const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
+
+      const res = await fetch(`${API}/api/v1/recipe/addrecipes`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,95 +56,120 @@ const AddRecipe = () => {
   };
 
   return (
-    <div className="form-container">
-      <h2 className="form-title">Add / Update Recipe</h2>
-      <form onSubmit={handleSubmit} className="recipe-form">
-        {/* Title */}
-        <label className="form-label">Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter recipe title"
-          className="form-input"
-          required
-        />
-
-        {/* Category */}
-        <label className="form-label">Category</label>
-        <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="form-input"
-          required
-        >
-          <option value="">Select Category</option>
-          <option value="Breakfast">Breakfast</option>
-          <option value="Lunch">Lunch</option>
-          <option value="Dinner">Dinner</option>
-        </select>
-
-        {/* Image URL */}
-        <label className="form-label">Image URL</label>
-        <input
-          type="text"
-          placeholder="Image URL"
-          value={imgurl}
-          onChange={(e) => setImgurl(e.target.value)}
-          className="form-input"
-          required
-        />
-
-        {/* Instructions */}
-        <label className="form-label">Instructions</label>
-        <textarea
-          placeholder="Instructions"
-          value={instr}
-          onChange={(e) => setInstr(e.target.value)}
-          className="form-textarea"
-          required
-        />
-
-        {/* Ingredients */}
-        <label className="form-label">Ingredients</label>
-        {ingredients.map((ing, idx) => (
-          <div key={idx} className="ingredient-row">
+    <div className="auth-container" style={{ padding: "4rem 1rem" }}>
+      <div className="auth-card" style={{ maxWidth: "800px" }}>
+        <h2 className="auth-title">Share Your Recipe</h2>
+        <form onSubmit={handleSubmit} className="auth-form">
+          {/* Title */}
+          <div className="form-group">
+            <label className="form-label">Title</label>
             <input
               type="text"
-              placeholder="Ingredient name"
-              value={ing.name}
-              onChange={(e) => handleIngredientChange(idx, "name", e.target.value)}
-              className="form-input ingredient-input"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g., Spicy Pasta"
+              className="form-input"
               required
             />
-            <input
-              type="text"
-              placeholder="Quantity"
-              value={ing.qty}
-              onChange={(e) => handleIngredientChange(idx, "qty", e.target.value)}
-              className="form-input ingredient-input"
-              required
-            />
-            {ingredients.length > 1 && (
-              <button
-                type="button"
-                className="remove-btn"
-                onClick={() => removeIngredient(idx)}
-              >
-                Remove
-              </button>
-            )}
           </div>
-        ))}
-        <button type="button" className="add-btn" onClick={addIngredient}>
-          + Add Ingredient
-        </button>
 
-        {/* Submit */}
-        <button type="submit" className="submit-btn">
-          Save Recipe
-        </button>
-      </form>
+          {/* Category */}
+          <div className="form-group">
+            <label className="form-label">Category</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="form-input"
+              required
+            >
+              <option value="">Select Category</option>
+              <option value="Breakfast">Breakfast</option>
+              <option value="Lunch">Lunch</option>
+              <option value="Dinner">Dinner</option>
+              <option value="Dessert">Dessert</option>
+            </select>
+          </div>
+
+          {/* Image URL */}
+          <div className="form-group">
+            <label className="form-label">Image URL</label>
+            <input
+              type="text"
+              placeholder="https://example.com/image.jpg"
+              value={imgurl}
+              onChange={(e) => setImgurl(e.target.value)}
+              className="form-input"
+              required
+            />
+          </div>
+
+          {/* Instructions */}
+          <div className="form-group">
+            <label className="form-label">Instructions</label>
+            <textarea
+              placeholder="Step 1: ..."
+              value={instr}
+              onChange={(e) => setInstr(e.target.value)}
+              className="form-input"
+              style={{ minHeight: "150px", resize: "vertical" }}
+              required
+            />
+          </div>
+
+          {/* Ingredients */}
+          <div className="form-group">
+            <label className="form-label">Ingredients</label>
+            {ingredients.map((ing, index) => (
+              <div key={index} style={{ display: "flex", gap: "10px", marginBottom: "10px" }}>
+                <input
+                  type="text"
+                  placeholder="Ingredient"
+                  value={ing.name}
+                  onChange={(e) => handleIngredientChange(index, "name", e.target.value)}
+                  className="form-input"
+                  style={{ flex: 2 }}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Qty"
+                  value={ing.qty}
+                  onChange={(e) => handleIngredientChange(index, "qty", e.target.value)}
+                  className="form-input"
+                  style={{ flex: 1 }}
+                  required
+                />
+                {ingredients.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeIngredient(index)}
+                    className="btn btn-secondary"
+                    style={{ padding: "0.5rem", borderColor: "#ef4444", color: "#ef4444" }}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={addIngredient}
+              className="btn btn-secondary"
+              style={{ width: "100%", marginTop: "0.5rem" }}
+            >
+              + Add Ingredient
+            </button>
+          </div>
+          
+          <button
+            type="submit"
+            className="btn btn-primary"
+            style={{ width: "100%", marginTop: "1rem" }}
+          >
+            Submit Recipe
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

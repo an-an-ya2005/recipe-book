@@ -1,35 +1,43 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom"; 
-import "../styles/ree.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import "../styles/recipes.css";
 
 const Recipes = () => {
   const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const selectedCategory = queryParams.get("category");
 
-  // Fetch all recipes
+  const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
+
+  // Fetch recipes
   const fetchRecipes = async () => {
+    setLoading(true);
     try {
-      const res = await fetch("http://localhost:7000/api/v1/recipe/recipes");
+      const res = await fetch(`${API}/api/v1/recipe/recipes`);
       const data = await res.json();
 
-      if (res.ok && Array.isArray(data.recipes)) {
-        let filteredRecipes = data.recipes;
+      if (res.ok) {
+        let fetchedRecipes = data.data || [];
         if (selectedCategory) {
-          filteredRecipes = filteredRecipes.filter(
-            (recipe) => recipe.category === selectedCategory
+          fetchedRecipes = fetchedRecipes.filter(
+            (r) => r.category === selectedCategory
           );
         }
-        setRecipes(filteredRecipes);
+        setRecipes(fetchedRecipes);
+        setError(null);
       } else {
-        setError("Invalid data format from API");
+        setError("Failed to fetch recipes");
       }
     } catch (err) {
-      console.error(err);
-      setError("Failed to fetch recipes");
+      setError("Failed to connect to server");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -38,68 +46,89 @@ const Recipes = () => {
   }, [location.search]);
 
   // Delete recipe
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, e) => {
+    e.stopPropagation();
     const token = localStorage.getItem("token");
-    if (!window.confirm("Are you sure you want to delete this recipe?")) return;
+
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    if (!window.confirm("Delete this recipe?")) return;
 
     try {
-      const res = await fetch(`http://localhost:7000/api/v1/recipe/deleterecipes/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await res.json();
+      const res = await fetch(
+        `${API}/api/v1/recipe/deleterecipes/${id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (res.ok) {
-        alert("Recipe deleted successfully!");
-        setRecipes(recipes.filter((r) => r._id !== id));
-      } else {
-        alert(data.message || "Failed to delete recipe.");
+        setRecipes((prev) => prev.filter((r) => r._id !== id));
       }
-    } catch (err) {
-      console.error(err);
-      alert("Error deleting recipe.");
+    } catch {
+      alert("Delete failed");
     }
   };
 
-  // Navigate to update form
-  const handleUpdate = (id) => {
+  const handleUpdate = (id, e) => {
+    e.stopPropagation();
     navigate(`/updaterecipe/${id}`);
   };
 
-  if (error) return <p>{error}</p>;
+  if (loading) return <div className="loading-state">Loading recipes...</div>;
+  if (error) return <div className="error-state">{error}</div>;
 
   return (
-    <div className="container">
-      <h2>Recipes</h2>
-
-      {/* Filter Buttons */}
-      <div className="filters">
-        <Link to="/recipes"><button>All</button></Link>
-        <Link to="/recipes?category=Breakfast"><button>Breakfast</button></Link>
-        <Link to="/recipes?category=Lunch"><button>Lunch</button></Link>
-        <Link to="/recipes?category=Dinner"><button>Dinner</button></Link>
+    <div className="recipes-page">
+      <div className="recipes-container">
+        {recipes.length === 0 ? (
+          <div className="empty-state">No recipes found. Why not add one?</div>
+        ) : (
+          <motion.div layout className="recipes-grid">
+            <AnimatePresence>
+              {recipes.map((recipe) => (
+                <motion.div 
+                  key={recipe._id} 
+                  layout 
+                  className="recipe-card"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => navigate(`/recipe/${recipe._id}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <img src={recipe.imgurl} alt={recipe.title} className="recipe-image" />
+                  <div className="recipe-content">
+                    <h3 className="recipe-title">{recipe.title}</h3>
+                    <p className="recipe-desc">{recipe.instr}</p>
+                    <div className="recipe-actions">
+                      <button 
+                        className="btn btn-primary btn-sm"
+                        onClick={(e) => handleUpdate(recipe._id, e)}
+                      >
+                        Edit
+                      </button>
+                      <button 
+                        className="btn btn-secondary btn-sm"
+                        onClick={(e) => handleDelete(recipe._id, e)}
+                        style={{ borderColor: '#ef4444', color: '#ef4444' }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
       </div>
-
-      {/* Recipes Grid */}
-      {recipes.length === 0 ? (
-        <p>No recipes found.</p>
-      ) : (
-        <div className="recipe-container">
-          {recipes.map((recipe) => (
-            <div key={recipe._id} className="recipe-card">
-              <h3>{recipe.title}</h3>
-              <img src={recipe.imgurl} alt={recipe.title} width="100%" />
-              <p>{recipe.instr}</p>
-              <p><strong>Category:</strong> {recipe.category}</p>
-
-              <div className="button-group">
-                <button onClick={() => handleDelete(recipe._id)}>Delete</button>
-                <button onClick={() => handleUpdate(recipe._id)}>Update</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };

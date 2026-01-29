@@ -12,11 +12,12 @@ const Profile = () => {
   // Fetch profile data
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        const res = await axios.get(
-          'http://localhost:7000/api/v1/user/profile',
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+    try {
+      const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
+      const res = await axios.get(
+        `${API}/api/v1/user/profile`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
         if (res.data.success) {
           setProfileData(res.data.data);
           setPreview(res.data.data.avatar || null); // set initial avatar
@@ -86,7 +87,7 @@ const Profile = () => {
         </div>
         <div className="profile-upload">
           <input type="file" onChange={handleFileChange} />
-          <button onClick={handleUpload} disabled={loading}>
+          <button onClick={handleUpload} disabled={loading} className="btn btn-primary">
             {loading ? "Uploading..." : "Update Photo"}
           </button>
         </div>

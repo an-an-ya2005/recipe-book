@@ -12,6 +12,12 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "password is required"],
+  },
+  likedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }],
+  nutritionGoals: {
+    highProtein: { type: Boolean, default: false },
+    lowCarb: { type: Boolean, default: false },
+    // Add more as needed
   }
 }); // ✅ Added missing closing bracket for userSchema
 

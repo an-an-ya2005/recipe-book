@@ -2,12 +2,16 @@
 const mongoose = require("mongoose");
 
 const mealPlanSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
   weekStart: { type: Date, required: true },
   meals: {
     monday: { breakfast: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, lunch: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, dinner: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" } },
     tuesday: { breakfast: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, lunch: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, dinner: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" } },
-    // repeat for all days...
+    wednesday: { breakfast: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, lunch: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, dinner: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" } },
+    thursday: { breakfast: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, lunch: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, dinner: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" } },
+    friday: { breakfast: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, lunch: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, dinner: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" } },
+    saturday: { breakfast: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, lunch: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, dinner: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" } },
+    sunday: { breakfast: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, lunch: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" }, dinner: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" } },
   }
 });
 

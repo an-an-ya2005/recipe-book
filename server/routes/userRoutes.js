@@ -4,6 +4,7 @@ const {
   registerController,
   getUserDataController,
   getProfilecontroller,
+  updateAvatarController,
 } = require("../controller/userCtrl");
 const Authenticate = require("../middlewares/auth");
 
@@ -20,5 +21,8 @@ router.post("/getUserData", Authenticate, getUserDataController);
 
 // Profile || GET
 router.get("/profile", Authenticate, getProfilecontroller);
+
+// Update avatar || PUT
+router.put("/updateAvatar", Authenticate, updateAvatarController);
 
 module.exports = router;

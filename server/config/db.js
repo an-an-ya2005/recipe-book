@@ -1,14 +1,15 @@
-
 const mongoose = require("mongoose");
-const ConnectURI = "mongodb://localhost:27017/taste";
-mongoose.set('strictQuery', true);
 
-const ConnectToMongo = async () => {
+mongoose.set("strictQuery", true);
+
+const connectDB = async () => {
   try {
-    await mongoose.connect(ConnectURI);
-    console.log("Connect To Mongo Successful");
-  } catch (err) {
-    console.log("Connect To Mongo Unsuccessful", err);
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ Connected to MongoDB Atlas");
+  } catch (error) {
+    console.error("❌ MongoDB connection failed:", error.message);
+    process.exit(1); // stop server if DB fails
   }
 };
-module.exports = ConnectToMongo;
+
+module.exports = connectDB;
