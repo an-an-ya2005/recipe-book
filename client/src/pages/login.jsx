@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 import { Form, Input } from "antd";
 import { useDispatch } from "react-redux";
 import { showLoading, hideLoading } from "../redux/features/alertSlice";
@@ -11,12 +11,10 @@ function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
-  const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
-
   const handleLogin = async (values) => {
     dispatch(showLoading());
     try {
-      const response = await axios.post(`${API}/api/v1/user/login`, {
+      const response = await api.post(`/api/v1/user/login`, {
         email: values.email,
         password: values.password,
       });

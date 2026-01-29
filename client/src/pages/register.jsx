@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input, message } from "antd";
-import axios from "axios";
+import api from "../api/axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { showLoading, hideLoading } from "../redux/features/alertSlice";
@@ -10,12 +10,10 @@ const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
-
   const onFinishHandler = async (values) => {
     try {
       dispatch(showLoading());
-      const res = await axios.post(`${API}/api/v1/user/register`, values);
+      const res = await api.post(`/api/v1/user/register`, values);
       dispatch(hideLoading());
       if (res.data.success) {
         message.success("Registered Successfully!");

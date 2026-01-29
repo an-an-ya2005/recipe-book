@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import '../styles/profile.css';
 
 const Profile = () => {
@@ -13,9 +13,8 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
     try {
-      const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
-      const res = await axios.get(
-        `${API}/api/v1/user/profile`,
+      const res = await api.get(
+        `/api/v1/user/profile`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
         if (res.data.success) {
@@ -46,8 +45,8 @@ const Profile = () => {
 
     try {
       setLoading(true);
-      const res = await axios.put(
-        'http://localhost:7000/api/v1/user/updateAvatar',
+      const res = await api.put(
+        '/api/v1/user/updateAvatar',
         formData,
         {
           headers: {

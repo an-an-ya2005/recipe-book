@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import api from "../api/axios";
 import "../styles/recipes.css";
 
 const Recipes = () => {
@@ -13,16 +14,14 @@ const Recipes = () => {
   const queryParams = new URLSearchParams(location.search);
   const selectedCategory = queryParams.get("category");
 
-  const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
-
   // Fetch recipes
   const fetchRecipes = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/api/v1/recipe/recipes`);
-      const data = await res.json();
+      const res = await api.get(`/api/v1/recipe/recipes`);
+      const data = res.data;
 
-      if (res.ok) {
+      if (data?.success) {
         let fetchedRecipes = data.data || [];
         if (selectedCategory) {
           fetchedRecipes = fetchedRecipes.filter(
@@ -58,17 +57,16 @@ const Recipes = () => {
     if (!window.confirm("Delete this recipe?")) return;
 
     try {
-      const res = await fetch(
-        `${API}/api/v1/recipe/deleterecipes/${id}`,
+      const res = await api.delete(
+        `/api/v1/recipe/deleterecipes/${id}`,
         {
-          method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      if (res.ok) {
+      if (res.status === 200) {
         setRecipes((prev) => prev.filter((r) => r._id !== id));
       }
     } catch {

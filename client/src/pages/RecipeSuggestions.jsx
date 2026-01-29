@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../api/axios";
 import { motion } from "framer-motion";
 import "../styles/recipes.css";
 
@@ -26,8 +26,8 @@ const RecipeSuggestions = () => {
     try {
       const ingredientsArray = availableIngredients.split(",").map(i => i.trim()).filter(i => i);
       const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
-      const response = await axios.post(
-        `${API}/api/v1/recipe/recommendations`,
+      const response = await api.post(
+        `/api/v1/recipe/recommendations`,
         {
           userId: user?._id,
           availableIngredients: ingredientsArray,

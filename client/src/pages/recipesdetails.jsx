@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import api from "../api/axios";
 import "../styles/recipes.css";
 
 const RecipeDetails = () => {
@@ -10,16 +11,14 @@ const RecipeDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
-
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const res = await fetch(`${API}/api/v1/recipe/idrecipes/${id}`);
-        const data = await res.json();
+        const res = await api.get(`/api/v1/recipe/idrecipes/${id}`);
+        const data = res.data;
         
-        if (res.ok) {
-          setRecipe(data);
+        if (data?.success) {
+          setRecipe(data.data);
         } else {
           setError("Failed to load recipe details");
         }
@@ -33,7 +32,7 @@ const RecipeDetails = () => {
     if (id) {
       fetchRecipe();
     }
-  }, [id, API]);
+  }, [id]);
 
   if (loading) {
     return (

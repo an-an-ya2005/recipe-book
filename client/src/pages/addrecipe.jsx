@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import api from "../api/axios";
 import "../styles/auth.css"; // Reusing auth styles for consistency
 
 const AddRecipe = () => {
@@ -26,20 +27,14 @@ const AddRecipe = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const API = import.meta.env.VITE_API_URL || "http://localhost:7000";
-
-      const res = await fetch(`${API}/api/v1/recipe/addrecipes`, {
-        method: "POST",
+      const res = await api.post(`/api/v1/recipe/addrecipes`, recipeData, {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(recipeData),
       });
+      const data = res.data;
 
-      const data = await res.json();
-
-      if (res.ok) {
+      if (data?.success) {
         alert("Recipe added successfully!");
         setTitle("");
         setInstr("");
@@ -47,7 +42,7 @@ const AddRecipe = () => {
         setCategory("");
         setIngredients([{ name: "", qty: "" }]);
       } else {
-        alert(data.message || "Failed to add recipe.");
+        alert(data?.message || "Failed to add recipe.");
       }
     } catch (err) {
       console.error(err);
